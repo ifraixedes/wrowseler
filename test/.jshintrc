@@ -3,11 +3,11 @@
     "strict": true,
     "predef": [
       "before",
-    "beforeEach",
-    "afterEach",
-    "it",
-    "describe",
-    "after"
+      "beforeEach",
+      "after",
+      "afterEach",
+      "describe",
+      "it"
       ],
     "latedef": false,
     "white": true,
@@ -16,5 +16,6 @@
     "camelcase": true,
     "trailing": true,
     "expr": true,
-    "newcap": false
+    "newcap": false,
+    "quotmark": true
 }

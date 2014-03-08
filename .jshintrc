@@ -8,5 +8,6 @@
   "curly": true,
   "camelcase": true,
   "trailing": true,
-  "newcap": false
+  "newcap": true,
+  "quotmark": true
 }
