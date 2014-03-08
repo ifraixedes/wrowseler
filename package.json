@@ -1,0 +1,31 @@
+{
+  "name": "wrouseler",
+  "version": "0.0.0",
+  "description": "A crawler framework which run in a browser using selenim web driver v2",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -R spec --recursive test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:ifraixedes/wrouseler.git"
+  },
+  "keywords": [
+    "crawler",
+    "browser",
+    "selenium",
+    "webdriver"
+  ],
+  "author": "Ivan Fraixedes Cugat <ifcdev@gmail.com>",
+  "license": "Ivan Fraixedes",
+  "devDependencies": {
+    "mocha": "~1.17.1",
+    "jshint": "~2.4.4"
+  },
+  "dependencies": {
+    "selenium-webdriver": "~2.40.0"
+  }
+}
