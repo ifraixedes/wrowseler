@@ -5,7 +5,7 @@ export PATH := ./node_modules/.bin:$(PATH)
 all: lint test
 
 test:
-	@mocha -R spec --recursive test
+	@mocha --harmony -R spec --recursive test
 
 lint:
 	jshint lib
