@@ -23,9 +23,11 @@
   "license": "Ivan Fraixedes",
   "devDependencies": {
     "mocha": "~1.17.1",
-    "jshint": "~2.4.4"
+    "jshint": "~2.4.4",
+    "chai": "~1.9.0"
   },
   "dependencies": {
-    "selenium-webdriver": "~2.40.0"
+    "selenium-webdriver": "~2.40.0",
+    "uuid": "~1.4.1"
   }
 }
