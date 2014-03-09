@@ -17,5 +17,6 @@
     "trailing": true,
     "expr": true,
     "newcap": false,
-    "quotmark": true
+    "quotmark": true,
+    "esnext": true
 }

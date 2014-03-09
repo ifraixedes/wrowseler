@@ -9,5 +9,6 @@
   "camelcase": true,
   "trailing": true,
   "newcap": true,
-  "quotmark": true
+  "quotmark": true,
+  "esnext": true
 }
