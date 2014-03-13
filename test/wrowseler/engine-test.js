@@ -21,7 +21,7 @@ describe('Browserler engine', function () {
       throw new Error('Engine instantition should throw an Error but it did not');
     });
   });
-  
+
   describe('is instantiated without any base sequence', function () {
     var browser = {};
     var engine;
@@ -36,7 +36,7 @@ describe('Browserler engine', function () {
       function taskDoneListener(task) {
         tasksDone.push(task);
       }
-      
+
       var tasksDone = [];
       var taskId;
 
@@ -54,6 +54,84 @@ describe('Browserler engine', function () {
         tasksDone.should.length(1);
         taskDone.should.have.a.property('id', taskId);
         taskDone.should.have.a.property('result', undefined);
+      });
+    });
+
+    describe('and it runs with a step sequences', function () {
+      function taskDoneListener(task) {
+        tasksDone.push(task);
+      }
+
+      function fakeStep() {
+        var generator = arguments[0];
+        var args = [].slice.call(arguments, 1);
+        var argsToPassNext = args.slice(1);
+
+        stepsArguments.push(args);
+        argsToPassNext.push(argsToPassNext[argsToPassNext.length - 1] + 1);
+
+        setImmediate(function () {
+          generator.next.call(generator, argsToPassNext);
+        });
+      }
+
+      var stepsArguments = [];
+      var tasksDone = [];
+      var numSteps = 3;
+      var taskId;
+
+      before(function () {
+        var steps = [];
+
+        engine.on('task-done', taskDoneListener);
+
+        for (let si = 0; si < numSteps; si++) {
+          steps.push(fakeStep);
+        }
+
+        taskId = engine.run(steps, 0);
+      });
+
+      it('return a task object', function () {
+        taskId.should.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+      });
+
+      for (let si = 0; si < numSteps; si++) {
+        it('step ' + si + ' has been called with the agument number of the previous step and added new argument which it is the previous number plus 1', function (idx, done) {
+          function waitUntilStepEnds() {
+            if (idx < stepsArguments.length) {
+              let stepArgs = stepsArguments[idx];
+              stepArgs.should.have.length(idx + 2);
+              stepArgs[0].should.deep.equals(engine.browser);
+
+              for (let ai = 2; ai < stepArgs.length; ai++) {
+                stepArgs[ai].should.equals(stepArgs[ai - 1] + 1);
+              }
+
+              done();
+            } else {
+              setImmediate(waitUntilStepEnds);
+            }
+          }
+
+          waitUntilStepEnds(idx);
+        }.bind(null, si));
+      }
+
+      it('when task finish, we get back a task done object with its id', function (done) {
+        function waitUntilEnd() {
+          if (0 < tasksDone.length) {
+            let taskDone = tasksDone[0];
+            tasksDone.should.length(1);
+            taskDone.should.have.a.property('id', taskId);
+            taskDone.should.have.a.property('result', undefined);
+            done();
+          } else {
+            setImmediate(waitUntilEnd);
+          }
+        }
+
+        waitUntilEnd();
       });
     });
   });
