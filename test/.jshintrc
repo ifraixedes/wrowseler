@@ -18,5 +18,6 @@
     "expr": true,
     "newcap": false,
     "quotmark": true,
-    "esnext": true
+    "esnext": true,
+    "loopfunc": true
 }
