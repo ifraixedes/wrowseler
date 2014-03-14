@@ -281,4 +281,23 @@ describe('Browserler engine', function () {
       });
     });
   });
+
+  describe('instance can only run one task at time', function () {
+    var engine;
+
+    before(function () {
+      engine = new Engine({
+        browser: {},
+        sequence: [function (generator, browser) { }]
+      });
+    });
+
+    it('so when run the first task, a task id is returned', function () {
+      engine.run().should.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+    });
+
+    it('however if another task is run before a previous one is finished then throw an Error', function () {
+      engine.run.bind(engine).should.throws(Error, 'The engine is running one task. So far only one task can be executed a time');
+    });
+  });
 });
