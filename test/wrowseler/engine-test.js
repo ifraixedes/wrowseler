@@ -3,7 +3,7 @@
 var chai = require('chai');
 var Engine = require('../../lib/wrowseler/engine');
 
-describe.only('Browserler engine', function () {
+describe('Browserler engine', function () {
   var expect = chai.expect;
 
   describe('is instanitated without any parameters', function () {
@@ -18,7 +18,6 @@ describe.only('Browserler engine', function () {
         return;
       }
 
-      throw new Error('Engine instantition should throw an Error but it did not');
     });
   });
 
