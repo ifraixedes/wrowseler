@@ -144,8 +144,6 @@ describe('Browserler engine', function () {
 
         stepsArguments.push(args);
         argsToPassNext.push(argsToPassNext[argsToPassNext.length - 1] + 1);
-        console.log(stepsArguments.length);
-
         setImmediate(function () {
           generator.next.call(generator, argsToPassNext);
         });
