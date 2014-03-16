@@ -223,6 +223,41 @@ describe('Browserler engine', function () {
       expect(engine.run.bind(engine)).to.throws(Error, 'The engine is running one task. So far only one task can be executed a time');
     });
   });
+  
+  describe('instance which runs a steps sequence', function () {
+    function taskDoneListener(task) {
+      tasksDone.push(task);
+    }
+
+    var engine;
+    var taskId;
+    var tasksDone = [];
+
+    before(function () {
+      engine = new Engine({
+        browser: {},
+        sequence: [function (generator, browser) { generator.throw(new Error('Aborted')); }]
+      });
+        
+      engine.on('task-done', taskDoneListener);
+    });
+      
+    it('which return a task id', function () {
+      taskId = engine.run();
+      expect(taskId).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+    });
+
+    describe('but if the sequence produce and error', function () {
+      it('task done object ', function () {
+        var taskDone = tasksDone[0];
+        expect(tasksDone).to.have.length(1);
+        expect(taskDone).to.have.ownProperty('id', taskId);
+        expect(taskDone).not.to.have.ownProperty('results');
+        expect(taskDone).to.have.ownProperty('error');
+        expect(taskDone.error).to.instanceOf(Error).and.ownProperty('message', 'Arborted');
+      });
+    });
+  });
 });
 
 function waitTaskUntilDone(expect, taskId, tasksDone, stepsArguments, done) {
