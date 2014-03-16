@@ -4,29 +4,60 @@ var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
 var wrowseler = require('../../lib/wrowseler');
 
-describe.only('Wroweler browses Google', function () {
-  var wrowselerEngine, taskId;
+describe('Wroweler browses Google', function () {
+  var wrowselerEngine, wbChrome;
   var expect = chai.expect;
   var searchText = 'webdriver';
 
-  before(function () {
-    var wbChrome = new seleniumWb.Builder()
+  beforeEach(function () {
+    wbChrome = new seleniumWb.Builder()
     .withCapabilities(seleniumWb.Capabilities.chrome())
     .build();
 
     wrowselerEngine = new wrowseler.Engine({
       browser: wbChrome,
-      sequence: [homeStep, searchStep, onLoadSearchResultsPage, getResultsPageTitle]
+      sequence: [homeStep, searchStep]
     });
-    taskId = wrowselerEngine.run(null, searchText);
+  });
+  
+  afterEach(function () {
+    wbChrome.controlFlow().reset();
   });
 
   it('with a steps sequence which should return the search result page\'s title', function (done) {
+    var taskId = wrowselerEngine.run([onLoadSearchResultsPage, getResultsPageTitle], searchText);
+
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
       expect(taskDoneObj).to.have.ownProperty('id', taskId);
       expect(taskDoneObj).to.have.ownProperty('results');
       expect(taskDoneObj.results).to.match(new RegExp(searchText));
+      done();
+    });
+  });
+
+  it('with a steps sequence that fail in one step of the sequence should report an error', function (done) {
+    var taskId = wrowselerEngine.run([throwErrorOnGenerator, getResultsPageTitle], searchText);
+
+    this.timeout(20000);
+    wrowselerEngine.on('task-done', function (taskDoneObj) {
+      expect(taskDoneObj).to.have.ownProperty('id', taskId);
+      expect(taskDoneObj).not.to.have.ownProperty('results');
+      expect(taskDoneObj).to.have.ownProperty('error');
+      expect(taskDoneObj.error).to.be.an.instanceOf(Error).and.have.ownProperty('message', 'Generator error thrown');
+      done();
+    });
+  });
+
+  it('with a steps sequence that throw unexpected exception in one step of the sequence should report an error', function (done) {
+    var taskId = wrowselerEngine.run([throwErrorOnBrowser, getResultsPageTitle], searchText);
+
+    this.timeout(20000);
+    wrowselerEngine.on('task-done', function (taskDoneObj) {
+      expect(taskDoneObj).to.have.ownProperty('id', taskId);
+      expect(taskDoneObj).not.to.have.ownProperty('results');
+      expect(taskDoneObj).to.have.ownProperty('error');
+      expect(taskDoneObj.error).to.be.an.instanceOf(Error).and.have.ownProperty('message', 'Browser error thrown');
       done();
     });
   });
@@ -60,4 +91,17 @@ function onLoadSearchResultsPage(generator, browser, queryTextSearch) {
 function getResultsPageTitle(generator, browser) {
   browser.getTitle().then(generator.next.bind(generator));
   browser.quit();
+  browser.controlFlow().removeAllListeners('uncaughtException');
+}
+
+function throwErrorOnGenerator(generator, browser) {
+  browser.sleep(100).then(function () {
+    generator.throw(new Error('Generator error thrown'));
+  });
+}
+
+function throwErrorOnBrowser(generator, browser) {
+  browser.sleep(100).then(function () {
+    throw new Error('Browser error thrown');
+  });
 }
