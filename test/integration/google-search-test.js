@@ -15,6 +15,7 @@ describe('Wroweler browses Google', function () {
     .build();
 
     wrowselerEngine = new wrowseler.Engine({
+      switchOn: true,
       browser: wbChrome,
       sequence: [homeStep, searchStep]
     });
@@ -25,39 +26,39 @@ describe('Wroweler browses Google', function () {
   });
 
   it('with a steps sequence which should return the search result page\'s title', function (done) {
-    var taskId = wrowselerEngine.run([onLoadSearchResultsPage, getResultsPageTitle], searchText);
+    var taskId = wrowselerEngine.go([onLoadSearchResultsPage, getResultsPageTitle], searchText);
 
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
-      expect(taskDoneObj).to.have.ownProperty('id', taskId);
-      expect(taskDoneObj).to.have.ownProperty('results');
+      expect(taskDoneObj).to.have.property('id', taskId);
+      expect(taskDoneObj).to.have.property('results');
       expect(taskDoneObj.results).to.match(new RegExp(searchText));
       done();
     });
   });
 
   it('with a steps sequence that fail in one step of the sequence should report an error', function (done) {
-    var taskId = wrowselerEngine.run([throwErrorOnGenerator, getResultsPageTitle], searchText);
+    var taskId = wrowselerEngine.go([throwErrorOnGenerator, getResultsPageTitle], searchText);
 
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
-      expect(taskDoneObj).to.have.ownProperty('id', taskId);
-      expect(taskDoneObj).not.to.have.ownProperty('results');
-      expect(taskDoneObj).to.have.ownProperty('error');
-      expect(taskDoneObj.error).to.be.an.instanceOf(Error).and.have.ownProperty('message', 'Generator error thrown');
+      expect(taskDoneObj).to.have.property('id', taskId);
+      expect(taskDoneObj).not.to.have.property('results');
+      expect(taskDoneObj).to.have.property('error');
+      expect(taskDoneObj.error).to.be.an.instanceOf(Error).and.have.property('message', 'Generator error thrown');
       done();
     });
   });
 
   it('with a steps sequence that throw unexpected exception in one step of the sequence should report an error', function (done) {
-    var taskId = wrowselerEngine.run([throwErrorOnBrowser, getResultsPageTitle], searchText);
+    var taskId = wrowselerEngine.go([throwErrorOnBrowser, getResultsPageTitle], searchText);
 
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
-      expect(taskDoneObj).to.have.ownProperty('id', taskId);
-      expect(taskDoneObj).not.to.have.ownProperty('results');
-      expect(taskDoneObj).to.have.ownProperty('error');
-      expect(taskDoneObj.error).to.be.an.instanceOf(Error).and.have.ownProperty('message', 'Browser error thrown');
+      expect(taskDoneObj).to.have.property('id', taskId);
+      expect(taskDoneObj).not.to.have.property('results');
+      expect(taskDoneObj).to.have.property('error');
+      expect(taskDoneObj.error).to.be.an.instanceOf(Error).and.have.property('message', 'Browser error thrown');
       done();
     });
   });

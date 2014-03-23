@@ -17,7 +17,6 @@ describe('Browserler engine', function () {
         expect(e).match(/Cannot read property/);
         return;
       }
-
     });
   });
 
@@ -26,6 +25,7 @@ describe('Browserler engine', function () {
 
     before(function () {
       engine = new Engine({
+        switchOn: true,
         browser: {}
       });
     });
@@ -40,17 +40,18 @@ describe('Browserler engine', function () {
 
       before(function () {
         engine.on('task-done', taskDoneListener);
-        taskId = engine.run();
+        taskId = engine.go();
       });
 
-      it('return a task object', function () {
+      it('return a task id', function () {
         expect(taskId).match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
       });
 
-      it('when task finishes, it returns an object with task\'s id and results is undefined', function () {
+      it('when task finishes, it returns an object with task\'s id, status of "ok" and results is undefined', function () {
         var taskDone = tasksDone[0];
         expect(tasksDone).to.have.length(1);
-        expect(taskDone).to.have.ownProperty('id', taskId);
+        expect(taskDone).to.have.property('id', taskId);
+        expect(taskDone).to.have.property('status', 'ok');
         expect(taskDone).to.have.ownProperty('results');
         expect(taskDone.results).to.equal(undefined);
       });
@@ -88,7 +89,7 @@ describe('Browserler engine', function () {
           steps.push(fakeStep);
         }
 
-        taskId = engine.run(steps, 0);
+        taskId = engine.go(steps, 0);
       });
 
       it('return a task object', function () {
@@ -134,6 +135,7 @@ describe('Browserler engine', function () {
       }
 
       engine = new Engine({
+        switchOn: true,
         browser: {},
         sequence: baseSequence
       });
@@ -149,7 +151,7 @@ describe('Browserler engine', function () {
 
       before(function () {
         engine.on('task-done', taskDoneListener);
-        taskId = engine.run(null, 0);
+        taskId = engine.go(null, 0);
       });
 
       it('return a task object', function () {
@@ -186,7 +188,7 @@ describe('Browserler engine', function () {
           steps.push(fakeStep(stepsArguments));
         }
 
-        taskId = engine.run(steps, 0);
+        taskId = engine.go(steps, 0);
       });
 
       it('return a task object', function () {
@@ -205,25 +207,71 @@ describe('Browserler engine', function () {
     });
   });
 
-  describe('instance can only run one task at time', function () {
+  describe('instance non-switched on, when it has been instantitated', function () {
+    function taskDoneListener(task) {
+      tasksDone.push(task);
+    }
+
+    function fakeStep() {
+      var generator = arguments[0];
+      var args = [].slice.call(arguments, 1);
+      var argsToPassNext = args.slice(1);
+
+      sequenceExecuted = true;
+      stepsArguments.push(args);
+      argsToPassNext.push(argsToPassNext[argsToPassNext.length - 1] + 1);
+
+      setImmediate(function () {
+        generator.next.call(generator, argsToPassNext);
+      });
+    }
+
+    var stepsArguments = [];
+    var tasksDone = [];
+    var numSteps = 3;
+    var taskId;
+    var sequenceExecuted = false;
     var engine;
 
     before(function () {
+      var steps = [];
+      
+      for (let si = 0; si < numSteps; si++) {
+        steps.push(fakeStep);
+      }
+      
       engine = new Engine({
         browser: {},
-        sequence: [function (generator, browser) { }]
+        sequence: steps
       });
+      engine.on('task-done', taskDoneListener);
+      taskId = engine.go(null, 0);
     });
 
-    it('so when run the first task, a task id is returned', function () {
-      expect(engine.run()).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+    it('return a task object', function () {
+      expect(taskId).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
     });
 
-    it('however if another task is run before a previous one is finished then throw an Error', function () {
-      expect(engine.run.bind(engine)).to.throws(Error, 'The engine is running one task. So far only one task can be executed a time');
+    it('doesn\' execute the sequence until the engine is switched on', function (done) {
+      // Delay to give a gap of time for the posibility that the sequence be executed
+      setTimeout(function () {
+        expect(sequenceExecuted).to.equal(false);
+        engine.switchOn();
+        done();
+      }, 500);
+    });
+
+    for (let si = 0; si < numSteps; si++) {
+      it('step ' + si + ' has been called with the agument number of the previous step and added new argument which it is the previous number plus 1', function (idx, done) {
+        waitUntilStepEnds(expect, engine, stepsArguments, idx, done);
+      }.bind(null, si));
+    }
+
+    it('when task finishes, it returns an object with task\'s id and results', function (done) {
+      waitTaskUntilDone(expect, taskId, tasksDone, stepsArguments, done);
     });
   });
-  
+
   describe('instance which runs a steps sequence', function () {
     function taskDoneListener(task) {
       tasksDone.push(task);
@@ -235,15 +283,16 @@ describe('Browserler engine', function () {
 
     before(function () {
       engine = new Engine({
+        switchOn: true,
         browser: {},
         sequence: [function (generator, browser) { generator.throw(new Error('Aborted')); }]
       });
-        
+
       engine.on('task-done', taskDoneListener);
     });
-      
+
     it('which return a task id', function () {
-      taskId = engine.run();
+      taskId = engine.go();
       expect(taskId).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
     });
 
@@ -251,10 +300,80 @@ describe('Browserler engine', function () {
       it('task done object ', function () {
         var taskDone = tasksDone[0];
         expect(tasksDone).to.have.length(1);
-        expect(taskDone).to.have.ownProperty('id', taskId);
-        expect(taskDone).not.to.have.ownProperty('results');
-        expect(taskDone).to.have.ownProperty('error');
-        expect(taskDone.error).to.instanceOf(Error).and.ownProperty('message', 'Arborted');
+        expect(taskDone).to.have.property('id', taskId);
+        expect(taskDone).to.have.property('status', 'error');
+        expect(taskDone).not.to.have.property('results');
+        expect(taskDone).to.have.property('error');
+        expect(taskDone.error).to.instanceOf(Error).and.property('message', 'Aborted');
+      });
+    });
+  });
+  
+  describe('instance which runs two steps sequences but it is stopped before finishes', function () {
+    function taskDoneListener(task) {
+      tasksDone.push(task);
+    }
+    
+    function delayedSequenceStep(generator, browser) {
+      setTimeout(function () { generator.next('executed'); }, 300);
+    }
+
+    var engine;
+    var taskId1;
+    var taskId2;
+    var tasksDone = [];
+
+    before(function () {
+      engine = new Engine({
+        browser: {}
+      });
+
+      engine.on('task-done', taskDoneListener);
+      taskId1 = engine.go([delayedSequenceStep, delayedSequenceStep]);
+      taskId2 = engine.go([delayedSequenceStep, delayedSequenceStep]);
+      engine.switchOn();
+      engine.switchOff();
+    });
+
+    it('which returns the two task ids', function () {
+      expect(taskId1).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+      expect(taskId2).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+    });
+
+    it('task 1 ends with an status of "stopped" and undefined as results', function (done) {
+      setTimeout(function () {
+        var taskDone = tasksDone[0];
+        expect(tasksDone).to.have.length(1);
+        expect(taskDone).to.have.property('id', taskId1);
+        expect(taskDone).to.have.property('status', 'stopped');
+        expect(taskDone).to.have.ownProperty('results');
+        expect(taskDone.results).to.equal(undefined);
+        done();
+      }, 500);
+    });
+    
+    it('task 2 doesn\'t finish in the stoped cycle', function (done) {
+      setTimeout(function () {
+        var taskDone = tasksDone[0];
+        expect(tasksDone).to.have.length(1);
+        done();
+      }, 1000);
+    });
+
+    describe('but when it is switched on again', function () {
+      before(function () {
+        engine.switchOn();
+      });
+      
+      it('task 2 finishes with status of "ok" and the expected results value', function (done) {
+        setTimeout(function () {
+          var taskDone = tasksDone[1];
+          expect(tasksDone).to.have.length(2);
+          expect(taskDone).to.have.property('id', taskId2);
+          expect(taskDone).to.have.property('status', 'ok');
+          expect(taskDone).to.have.property('results', 'executed');
+          done();
+        }, 1000);
       });
     });
   });
@@ -267,8 +386,9 @@ function waitTaskUntilDone(expect, taskId, tasksDone, stepsArguments, done) {
 
     expectedResults.push(expectedResults[expectedResults.length - 1] + 1);
     expect(tasksDone).to.have.length(1);
-    expect(taskDone).to.have.ownProperty('id', taskId);
-    expect(taskDone).to.have.ownProperty('results');
+    expect(taskDone).to.have.property('id', taskId);
+    expect(taskDone).to.have.property('status', 'ok');
+    expect(taskDone).to.have.property('results');
     expect(taskDone.results).to.eql(expectedResults);
     done();
   } else {
@@ -276,6 +396,7 @@ function waitTaskUntilDone(expect, taskId, tasksDone, stepsArguments, done) {
   }
 }
 function waitUntilStepEnds(expect, engine, stepsArguments, idx, done) {
+
   if (idx < stepsArguments.length) {
     let stepArgs = stepsArguments[idx];
 
@@ -291,4 +412,3 @@ function waitUntilStepEnds(expect, engine, stepsArguments, idx, done) {
     setImmediate(waitUntilStepEnds.apply.bind(null, null, arguments));
   }
 }
-
