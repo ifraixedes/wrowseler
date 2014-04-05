@@ -71,7 +71,7 @@ describe('Browserler engine', function () {
         argsToPassNext.push(argsToPassNext[argsToPassNext.length - 1] + 1);
 
         setImmediate(function () {
-          generator.next.call(generator, argsToPassNext);
+          generator.next(argsToPassNext);
         });
       }
 
@@ -118,7 +118,7 @@ describe('Browserler engine', function () {
         stepsArguments.push(args);
         argsToPassNext.push(argsToPassNext[argsToPassNext.length - 1] + 1);
         setImmediate(function () {
-          generator.next.call(generator, argsToPassNext);
+          generator.next(argsToPassNext);
         });
       };
     }
@@ -222,7 +222,7 @@ describe('Browserler engine', function () {
       argsToPassNext.push(argsToPassNext[argsToPassNext.length - 1] + 1);
 
       setImmediate(function () {
-        generator.next.call(generator, argsToPassNext);
+        generator.next(argsToPassNext);
       });
     }
 
