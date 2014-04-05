@@ -40,7 +40,7 @@ describe('Browserler engine', function () {
 
       before(function () {
         engine.on('task-done', taskDoneListener);
-        taskId = engine.go();
+        taskId = engine.speedUp();
       });
 
       it('return a task id', function () {
@@ -89,7 +89,7 @@ describe('Browserler engine', function () {
           steps.push(fakeStep);
         }
 
-        taskId = engine.go(steps, 0);
+        taskId = engine.speedUp(steps, 0);
       });
 
       it('return a task object', function () {
@@ -151,7 +151,7 @@ describe('Browserler engine', function () {
 
       before(function () {
         engine.on('task-done', taskDoneListener);
-        taskId = engine.go(null, 0);
+        taskId = engine.speedUp(null, 0);
       });
 
       it('return a task object', function () {
@@ -188,7 +188,7 @@ describe('Browserler engine', function () {
           steps.push(fakeStep(stepsArguments));
         }
 
-        taskId = engine.go(steps, 0);
+        taskId = engine.speedUp(steps, 0);
       });
 
       it('return a task object', function () {
@@ -245,7 +245,7 @@ describe('Browserler engine', function () {
         sequence: steps
       });
       engine.on('task-done', taskDoneListener);
-      taskId = engine.go(null, 0);
+      taskId = engine.speedUp(null, 0);
     });
 
     it('return a task object', function () {
@@ -292,7 +292,7 @@ describe('Browserler engine', function () {
     });
 
     it('which return a task id', function () {
-      taskId = engine.go();
+      taskId = engine.speedUp();
       expect(taskId).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
     });
 
@@ -329,8 +329,8 @@ describe('Browserler engine', function () {
       });
 
       engine.on('task-done', taskDoneListener);
-      taskId1 = engine.go([delayedSequenceStep, delayedSequenceStep]);
-      taskId2 = engine.go([delayedSequenceStep, delayedSequenceStep]);
+      taskId1 = engine.speedUp([delayedSequenceStep, delayedSequenceStep]);
+      taskId2 = engine.speedUp([delayedSequenceStep, delayedSequenceStep]);
       engine.switchOn();
       engine.switchOff();
     });

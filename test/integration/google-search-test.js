@@ -27,7 +27,7 @@ describe('Wroweler browses Google', function () {
   });
 
   it('with a steps sequence which should return the search result page\'s title', function (done) {
-    var taskId = wrowselerEngine.go([stepsCollectionHelper.onLoadSearchResultsPage, stepsCollectionHelper.getResultsPageTitle], searchText);
+    var taskId = wrowselerEngine.speedUp([stepsCollectionHelper.onLoadSearchResultsPage, stepsCollectionHelper.getResultsPageTitle], searchText);
 
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
@@ -39,7 +39,7 @@ describe('Wroweler browses Google', function () {
   });
 
   it('with a steps sequence that fail in one step of the sequence should report an error', function (done) {
-    var taskId = wrowselerEngine.go([stepsCollectionHelper.throwErrorOnGenerator, stepsCollectionHelper.getResultsPageTitle], searchText);
+    var taskId = wrowselerEngine.speedUp([stepsCollectionHelper.throwErrorOnGenerator, stepsCollectionHelper.getResultsPageTitle], searchText);
 
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
@@ -52,7 +52,7 @@ describe('Wroweler browses Google', function () {
   });
 
   it('with a steps sequence that throw unexpected exception in one step of the sequence should report an error', function (done) {
-    var taskId = wrowselerEngine.go([stepsCollectionHelper.throwErrorOnBrowser, stepsCollectionHelper.getResultsPageTitle], searchText);
+    var taskId = wrowselerEngine.speedUp([stepsCollectionHelper.throwErrorOnBrowser, stepsCollectionHelper.getResultsPageTitle], searchText);
 
     this.timeout(20000);
     wrowselerEngine.on('task-done', function (taskDoneObj) {
