@@ -39,7 +39,7 @@ describe('Browserler engine', function () {
       var taskId;
 
       before(function () {
-        engine.on('task-done', taskDoneListener);
+        engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
         taskId = engine.speedUp();
       });
 
@@ -51,7 +51,7 @@ describe('Browserler engine', function () {
         var taskDone = tasksDone[0];
         expect(tasksDone).to.have.length(1);
         expect(taskDone).to.have.property('id', taskId);
-        expect(taskDone).to.have.property('status', 'ok');
+        expect(taskDone).to.have.property('status', Engine.TASK_STATUS_OK);
         expect(taskDone).to.have.ownProperty('results');
         expect(taskDone.results).to.equal(undefined);
       });
@@ -83,7 +83,7 @@ describe('Browserler engine', function () {
       before(function () {
         var steps = [];
 
-        engine.on('task-done', taskDoneListener);
+        engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
 
         for (let si = 0; si < numSteps; si++) {
           steps.push(fakeStep);
@@ -150,7 +150,7 @@ describe('Browserler engine', function () {
       var taskId;
 
       before(function () {
-        engine.on('task-done', taskDoneListener);
+        engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
         taskId = engine.speedUp(null, 0);
       });
 
@@ -182,7 +182,7 @@ describe('Browserler engine', function () {
         var steps = [];
 
         stepsArguments.splice(0, stepsArguments.length);
-        engine.on('task-done', taskDoneListener);
+        engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
 
         for (let si = 0; si < numSteps; si++) {
           steps.push(fakeStep(stepsArguments));
@@ -244,7 +244,7 @@ describe('Browserler engine', function () {
         browser: {},
         sequence: steps
       });
-      engine.on('task-done', taskDoneListener);
+      engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
       taskId = engine.speedUp(null, 0);
     });
 
@@ -288,7 +288,7 @@ describe('Browserler engine', function () {
         sequence: [function (generator, browser) { generator.throw(new Error('Aborted')); }]
       });
 
-      engine.on('task-done', taskDoneListener);
+      engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
     });
 
     it('which return a task id', function () {
@@ -301,7 +301,7 @@ describe('Browserler engine', function () {
         var taskDone = tasksDone[0];
         expect(tasksDone).to.have.length(1);
         expect(taskDone).to.have.property('id', taskId);
-        expect(taskDone).to.have.property('status', 'error');
+        expect(taskDone).to.have.property('status', Engine.TASK_STATUS_ERROR);
         expect(taskDone).not.to.have.property('results');
         expect(taskDone).to.have.property('error');
         expect(taskDone.error).to.instanceOf(Error).and.property('message', 'Aborted');
@@ -328,7 +328,7 @@ describe('Browserler engine', function () {
         browser: {}
       });
 
-      engine.on('task-done', taskDoneListener);
+      engine.on(Engine.EVENT_TASK_DONE, taskDoneListener);
       taskId1 = engine.speedUp([delayedSequenceStep, delayedSequenceStep]);
       taskId2 = engine.speedUp([delayedSequenceStep, delayedSequenceStep]);
       engine.switchOn();
@@ -370,7 +370,7 @@ describe('Browserler engine', function () {
           var taskDone = tasksDone[1];
           expect(tasksDone).to.have.length(2);
           expect(taskDone).to.have.property('id', taskId2);
-          expect(taskDone).to.have.property('status', 'ok');
+          expect(taskDone).to.have.property('status', Engine.TASK_STATUS_OK);
           expect(taskDone).to.have.property('results', 'executed');
           done();
         }, 1000);
@@ -387,7 +387,7 @@ function waitTaskUntilDone(expect, taskId, tasksDone, stepsArguments, done) {
     expectedResults.push(expectedResults[expectedResults.length - 1] + 1);
     expect(tasksDone).to.have.length(1);
     expect(taskDone).to.have.property('id', taskId);
-    expect(taskDone).to.have.property('status', 'ok');
+    expect(taskDone).to.have.property('status', Engine.TASK_STATUS_OK);
     expect(taskDone).to.have.property('results');
     expect(taskDone.results).to.eql(expectedResults);
     done();
