@@ -17,9 +17,11 @@ describe('Run flow "one-time-cycle"', function () {
 
   describe('when generator does not have any yield', function () {
     it('ends straigtaway', function (done) {
-      oneTimeCycle.run(function *() {
+      /* jshint noyield: true */
+      oneTimeCycle.run(function* () {
         done();
-      });  
+      });
+      /* jshint noyield: false */
     });
   });
 
@@ -41,13 +43,13 @@ describe('Run flow "one-time-cycle"', function () {
         expectedResult *= 2;
       }
     });
-    
+
     it('when task finishes, it returns an object with task\'s id and results', function (done) {
-      oneTimeCycle.run(function *() {
+      oneTimeCycle.run(function* () {
         var result = yield {
-         engine: engine, 
-         sequence: steps, 
-         arguments: initNumber 
+          engine: engine,
+          sequence: steps,
+          arguments: initNumber
         };
 
         expect(result).to.equal(expectedResult);
@@ -55,7 +57,7 @@ describe('Run flow "one-time-cycle"', function () {
       });
     });
   });
-  
+
   describe('stop the execution when an error is thrown', function () {
     function fakeStep(generator, browser, number) {
       setImmediate(function () {
@@ -72,29 +74,29 @@ describe('Run flow "one-time-cycle"', function () {
     var steps = [];
     var initNumber = 10;
     var expectedResult = initNumber;
-    
+
     before(function () {
       for (let si = 0; si < numSteps; si++) {
         steps.push(fakeStep);
-        
+
         if (expectedResult <= stopWhenGt) {
           expectedResult *= 2;
         }
       }
     });
-    
+
     it('receiving it in the generator scope', function (done) {
-      oneTimeCycle.run(function *() {
+      oneTimeCycle.run(function* () {
         try {
           var result = yield {
-            engine: engine, 
-            sequence: steps, 
-            arguments: initNumber 
+            engine: engine,
+            sequence: steps,
+            arguments: initNumber
           };
 
           done(new Error('It is expected that an Error be thrown but it was not'));
         } catch (expectedError) {
-          expect(expectedError.message).to.equal('Error when number is ' + expectedResult); 
+          expect(expectedError.message).to.equal('Error when number is ' + expectedResult);
           done();
         }
       });
