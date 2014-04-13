@@ -1,0 +1,13 @@
+{
+  "browser": true,
+  "strict": true,
+  "predef": [],
+  "latedef": false,
+  "indent": 2,
+  "curly": true,
+  "camelcase": true,
+  "trailing": true,
+  "newcap": true,
+  "quotmark": true,
+  "esnext": true
+}
