@@ -3,7 +3,7 @@
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
 var sinon = require('sinon');
-var cogs = require('../../../lib/rods/browser');
+var rods = require('../../../lib/rods/browser');
 
 describe('Browser rods base functions', function () {
   var expect = chai.expect;
@@ -21,7 +21,7 @@ describe('Browser rods base functions', function () {
         asyncFn = function () {
           //done()
         };
-        cogs.injectAsyncScript(wbChrome, asyncFn);
+        rods.injectAsyncScript(wbChrome, asyncFn);
       });
 
       it('`webdriver executeAsyncScript` method is executed with a script that wraps the function and defines a variable called `done`', function () {
@@ -52,7 +52,7 @@ describe('Browser rods base functions', function () {
         asyncFn = function () {
           //done()
         };
-        cogs.injectAsyncScript(wbChrome, asyncFn, 'argument 1', 'argument 2');
+        rods.injectAsyncScript(wbChrome, asyncFn, 'argument 1', 'argument 2');
       });
 
       it('`webdriver executeAsyncScript` method is executed with a script that wraps the function and defines a variable called `done`', function () {
@@ -85,7 +85,7 @@ describe('Browser rods base functions', function () {
         asyncFn = function () {
           //done()
         };
-        cogs.injectAsyncScript(wbChrome, { callbackName: 'myDone' }, asyncFn);
+        rods.injectAsyncScript(wbChrome, { callbackName: 'myDone' }, asyncFn);
       });
 
       it('`webdriver executeAsyncScript` method is executed with a script that wraps the function and defines a variable called `myDone`', function () {
@@ -116,7 +116,7 @@ describe('Browser rods base functions', function () {
         asyncFn = function () {
           //done()
         };
-        cogs.injectAsyncScript(wbChrome, { callbackName: 'myDone' }, asyncFn, 'argument 1', 'argument 2');
+        rods.injectAsyncScript(wbChrome, { callbackName: 'myDone' }, asyncFn, 'argument 1', 'argument 2');
       });
 
       it('`webdriver executeAsyncScript` method is executed with a script that wraps the function and defines a variable called `myDone`', function () {
@@ -149,7 +149,7 @@ describe('Browser rods base functions', function () {
 
         stub = sinon.stub(wbChrome, 'executeScript');
         syncFn = function () {  };
-        cogs.injectScript(wbChrome, syncFn);
+        rods.injectScript(wbChrome, syncFn);
       });
 
       it('`webdriver executeScript` method is executed', function () {
@@ -176,7 +176,7 @@ describe('Browser rods base functions', function () {
 
         stub = sinon.stub(wbChrome, 'executeScript');
         syncFn = function () {  };
-        cogs.injectScript(wbChrome, syncFn, 'argument 1', 'argument 2');
+        rods.injectScript(wbChrome, syncFn, 'argument 1', 'argument 2');
       });
 
       it('`webdriver executeScript` method is executed', function () {
