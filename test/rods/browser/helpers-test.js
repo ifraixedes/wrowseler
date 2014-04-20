@@ -166,7 +166,7 @@ describe('Browser rods base functions', function () {
       });
     });
 
-    describe('when called without options and with arguments', function () {
+    describe('when called with arguments', function () {
       var syncFn, wbChrome, stub;
 
       before(function () {
@@ -197,7 +197,7 @@ describe('Browser rods base functions', function () {
   });
 
   describe('`objectPropertiesToScript` transform to script all the enumerable properties of an object', function () {
-    var objToScript, generatedScript; 
+    var objToScript, generatedScript;
 
     before(function () {
       var prop7Value = {
@@ -250,6 +250,62 @@ describe('Browser rods base functions', function () {
 
     it('the generated script does not contain the non-enumerable properties', function () {
       expect(generatedScript).to.not.match(/var prop9='invisible'/);
+    });
+  });
+
+  describe('`injectScriptBlock`', function () {
+    describe('when called without arguments', function () {
+      var scriptBlock, wbChrome, stub;
+
+      before(function () {
+        wbChrome = new seleniumWb.Builder()
+        .withCapabilities(seleniumWb.Capabilities.chrome())
+        .build();
+
+        stub = sinon.stub(wbChrome, 'executeScript');
+        scriptBlock = rods.objectPropertiesToScript({
+          execMe: function () {}
+        });
+        rods.injectScriptBlock(wbChrome, scriptBlock, 'execMe');
+      });
+
+      it('`webdriver executeScript` method is executed', function () {
+        expect(stub.calledOnce).to.be.true;
+        expect(stub.args[0][0]).to.match(/var execMe=function/);
+        expect(stub.args[0][0]).to.match(/execMe\.apply\(null, arguments\);/);
+      });
+
+      it ('`webdriver executeScript` is called without any argument more', function () {
+        expect(stub.args[0]).to.length(1);
+      });
+    });
+
+    describe('when called with arguments', function () {
+      var scriptBlock, wbChrome, stub;
+
+      before(function () {
+        wbChrome = new seleniumWb.Builder()
+        .withCapabilities(seleniumWb.Capabilities.chrome())
+        .build();
+
+        stub = sinon.stub(wbChrome, 'executeScript');
+        scriptBlock = rods.objectPropertiesToScript({
+          execMe: function () {}
+        });
+        rods.injectScriptBlock(wbChrome, scriptBlock, 'execMe', 'argument 1', 'argument 2');
+      });
+
+      it('`webdriver executeScript` method is executed', function () {
+        expect(stub.calledOnce).to.be.true;
+        expect(stub.args[0][0]).to.match(/var execMe=function/);
+        expect(stub.args[0][0]).to.match(/execMe\.apply\(null, arguments\);/);
+      });
+
+      it ('`webdriver executeScript` is called with the provided arguments', function () {
+        expect(stub.args[0]).to.length(3);
+        expect(stub.args[0][1]).to.equal('argument 1');
+        expect(stub.args[0][2]).to.equal('argument 2');
+      });
     });
   });
 });
