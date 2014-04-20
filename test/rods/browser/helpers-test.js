@@ -215,6 +215,18 @@ describe('Browser rods base functions', function () {
         prop7: prop7Value
       };
 
+      Object.defineProperty(objToScript, 'prop8', {
+        enumerable: true,
+        writable: false,
+        value: 'static'
+      });
+
+      Object.defineProperty(objToScript, 'prop9', {
+        enumerable: false,
+        writable: false,
+        value: 'invisible'
+      });
+
       generatedScript = rods.objectPropertiesToScript(objToScript);
     });
 
@@ -226,13 +238,18 @@ describe('Browser rods base functions', function () {
 
     it('generating a script which contains the string variables defined as strings', function () {
       expect(generatedScript).to.match(/var prop3='a string'/);
+      expect(generatedScript).to.match(/var prop8='static'/);
     });
 
     it('generating a script which contains all the other types to their string representation ', function () {
       expect(generatedScript).to.match(/var prop4=10/);
       expect(generatedScript).to.match(/var prop5=\/regularExp\//);
-                                       expect(generatedScript).to.match(/var prop6=\[object Object\]/);
+      expect(generatedScript).to.match(/var prop6=\[object Object\]/);
       expect(generatedScript).to.match(new RegExp('var prop7=' + objToScript.prop7.toString()));
+    });
+
+    it('the generated script does not contain the non-enumerable properties', function () {
+      expect(generatedScript).to.not.match(/var prop9='invisible'/);
     });
   });
 });
