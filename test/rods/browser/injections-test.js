@@ -156,7 +156,7 @@ describe('Browser rods\' injections', function () {
       it('`webdriver executeScript` method is executed', function () {
         var expectedScript =
           ' var func = ' + syncFn.toString() + ';' +
-          ' func.apply(null, arguments);';
+          ' return func.apply(null, arguments);';
 
         expect(stub.calledOnce).to.be.true;
         expect(stub.args[0][0]).to.equal(expectedScript);
@@ -183,7 +183,7 @@ describe('Browser rods\' injections', function () {
       it('`webdriver executeScript` method is executed', function () {
         var expectedScript =
           ' var func = ' + syncFn.toString() + ';' +
-          ' func.apply(null, arguments);';
+          ' return func.apply(null, arguments);';
 
         expect(stub.calledOnce).to.be.true;
         expect(stub.args[0][0]).to.equal(expectedScript);
