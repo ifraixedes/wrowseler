@@ -2,13 +2,12 @@
 
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
-var wrowseler = require('../../lib/wrowseler');
+var Engine = require('../../lib/engine');
 var stepsCollectionHelper = require('../helpers/google-steps-collection');
 
 describe('Wroweler browses Google', function () {
   var engine, wbChrome;
   var expect = chai.expect;
-  var WEngine = wrowseler.Engine;
   var searchText = 'webdriver';
 
   beforeEach(function () {
@@ -16,7 +15,7 @@ describe('Wroweler browses Google', function () {
     .withCapabilities(seleniumWb.Capabilities.chrome())
     .build();
 
-    engine = new WEngine({
+    engine = new Engine({
       switchOn: true,
       browser: wbChrome,
       sequence: [stepsCollectionHelper.homeStep, stepsCollectionHelper.searchStep]
@@ -31,7 +30,7 @@ describe('Wroweler browses Google', function () {
     var taskId = engine.speedUp([stepsCollectionHelper.onLoadSearchResultsPage, stepsCollectionHelper.getResultsPageTitle], searchText);
 
     this.timeout(20000);
-    engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+    engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
       expect(taskDoneObj).to.have.property('id', taskId);
       expect(taskDoneObj).to.have.property('results');
       expect(taskDoneObj.results).to.match(new RegExp(searchText));
@@ -43,7 +42,7 @@ describe('Wroweler browses Google', function () {
     var taskId = engine.speedUp([stepsCollectionHelper.throwErrorOnGenerator, stepsCollectionHelper.getResultsPageTitle], searchText);
 
     this.timeout(20000);
-    engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+    engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
       expect(taskDoneObj).to.have.property('id', taskId);
       expect(taskDoneObj).not.to.have.property('results');
       expect(taskDoneObj).to.have.property('error');
@@ -56,7 +55,7 @@ describe('Wroweler browses Google', function () {
     var taskId = engine.speedUp([stepsCollectionHelper.throwErrorOnBrowser, stepsCollectionHelper.getResultsPageTitle], searchText);
 
     this.timeout(20000);
-    engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+    engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
       expect(taskDoneObj).to.have.property('id', taskId);
       expect(taskDoneObj).not.to.have.property('results');
       expect(taskDoneObj).to.have.property('error');

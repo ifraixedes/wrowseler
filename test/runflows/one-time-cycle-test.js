@@ -1,6 +1,6 @@
 'use strict';
 
-var Engine = require('../../lib/wrowseler').Engine;
+var Engine = require('../../lib/engine');
 var oneTimeCycle = require('../../lib/runflows').oneTimeCycle;
 var chai = require('chai');
 

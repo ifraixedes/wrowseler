@@ -2,14 +2,13 @@
 
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
-var wrowseler = require('../../../lib/wrowseler');
+var Engine = require('../../../lib/engine');
 var rodsInjections = require('../../../lib/rods/browser/injections');
 var rodsHelpers = require('../../../lib/rods/browser/helpers');
 
 describe('When wrowseler execute a sequence which', function () {
   var engine, wbChrome;
   var expect = chai.expect;
-  var WEngine = wrowseler.Engine;
   var numOfPElements;
 
   beforeEach(function () {
@@ -17,7 +16,7 @@ describe('When wrowseler execute a sequence which', function () {
     .withCapabilities(seleniumWb.Capabilities.chrome())
     .build();
 
-    engine = new WEngine({
+    engine = new Engine({
       switchOn: true,
       browser: wbChrome
     });
@@ -32,7 +31,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], syncFunctionTest, false);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.be.a('number');
         numOfPElements = taskDoneObj.results;
@@ -46,7 +45,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], asyncFunctionTest, false);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.equal(numOfPElements);
         done();
@@ -59,7 +58,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], syncScriptBlockTest, false);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.equal(numOfPElements);
         done();
@@ -72,7 +71,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], asyncScriptBlockTest, false);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.be.a('number');
         expect(taskDoneObj.results).to.equal(numOfPElements);
@@ -86,7 +85,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], syncFunctionTest, true);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.be.a('object');
         expect(taskDoneObj.results).to.have.property('name', 'p');
@@ -101,7 +100,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], asyncFunctionTest, true);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.be.a('object');
         expect(taskDoneObj.results).to.have.property('name', 'p');
@@ -116,7 +115,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], syncScriptBlockTest, true);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.be.a('object');
         expect(taskDoneObj.results).to.have.property('name', 'p');
@@ -131,7 +130,7 @@ describe('When wrowseler execute a sequence which', function () {
       engine.speedUp([scriptInjectionStep], asyncScriptBlockTest, true);
 
       this.timeout(10000);
-      engine.on(WEngine.EVENT_TASK_DONE, function (taskDoneObj) {
+      engine.on(Engine.EVENT_TASK_DONE, function (taskDoneObj) {
         expect(taskDoneObj).to.have.property('results');
         expect(taskDoneObj.results).to.be.a('object');
         expect(taskDoneObj.results).to.have.property('name', 'p');
