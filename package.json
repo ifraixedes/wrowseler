@@ -19,16 +19,17 @@
     "selenium",
     "webdriver"
   ],
-  "author": "Ivan Fraixedes Cugat <ifcdev@gmail.com>",
+  "author": "Ivan Fraixedes <ivan@fraixed.es> (http://ivan.fraixed.es)",
   "license": "Ivan Fraixedes",
   "devDependencies": {
-    "mocha": "~1.17.1",
-    "jshint": "~2.4.4",
     "chai": "~1.9.0",
+    "jshint": "~2.4.4",
+    "mocha": "~1.17.1",
     "sinon": "~1.9.1"
   },
   "dependencies": {
     "selenium-webdriver": "~2.40.0",
+    "lodash": "^2.4.1",
     "uuid": "~1.4.1"
   }
 }
