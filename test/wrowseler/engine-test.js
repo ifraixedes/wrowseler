@@ -432,6 +432,36 @@ describe('Browserler engine', function () {
       });
     });
   });
+
+  describe('instance which runs a sequence of one step which emits an event', function () {
+    function fakeStep(generator, browser) {
+      generator.emit('test-consumer-event', { msg: 'it is a test' });
+      generator.next();
+    }
+
+    var eventData = null;
+
+    before(function () {
+      var engine = new Engine({
+        switchOn: true
+      });
+      engine.on('test-consumer-event', function (data) { eventData = data; });
+      engine.speedUp([fakeStep]);
+    });
+
+    it('emits the event to the engine instance', function (done) {
+      function waitUntilConsumerEvent() {
+        if (eventData !== null) {
+          expect(eventData).to.have.property('msg', 'it is a test');
+          done();
+        } else {
+          setTimeout(waitUntilConsumerEvent, 100);
+        }
+      }
+
+      waitUntilConsumerEvent();
+    });
+  });
 });
 
 function waitTaskUntilDone(expect, taskId, tasksDone, stepsArguments, done) {
