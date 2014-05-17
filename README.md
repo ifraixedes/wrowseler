@@ -9,9 +9,10 @@ NOTE: This project is totally Work In Progress.
 
 ## Technical specifications
 
-It is built with `nodejs` and `webdriver` node module which is the implementation of [Selenium WebDriver](http://docs.seleniumhq.org/projects/webdriver).
-
+It is built with `NodeJS` and `webdriver` node module which is the implementation of [Selenium WebDriver](http://docs.seleniumhq.org/projects/webdriver).
 For this reason its constrains to use different browsers are the same that [Selenium WebDriver JS API implementation](http://selenium.googlecode.com/git/docs/api/javascript/index.html).
+
+It uses `NodeJS 0.11` because it uses some of the features of the next release of Javascript, ECMA 6, named "harmony", as `generators`; therefore to use it you have to execute node with `--harmony` flag
 
 ## What does "wrowseler" mean?
 
