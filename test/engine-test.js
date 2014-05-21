@@ -2,7 +2,7 @@
 
 var chai = require('chai');
 var _ = require('lodash');
-var Engine = require('../../lib/engine');
+var Engine = require('../lib/engine');
 
 var _clone = _.clone;
 var _last = _.last;
