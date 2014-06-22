@@ -4,7 +4,7 @@ var Engine = require('../../lib/engine');
 var oneTimeCycle = require('../../lib/runflows').oneTimeCycle;
 var chai = require('chai');
 
-describe('Run flow "one-time-cycle"', function () {
+describe('Run flow "oneTimeCycle"', function () {
   var expect = chai.expect;
   var engine;
 
