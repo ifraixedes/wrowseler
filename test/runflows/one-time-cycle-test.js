@@ -49,7 +49,7 @@ describe('Run flow "one-time-cycle"', function () {
         var result = yield {
           engine: engine,
           sequence: steps,
-          arguments: initNumber
+          arguments: [initNumber]
         };
 
         try {
@@ -86,13 +86,13 @@ describe('Run flow "one-time-cycle"', function () {
       setTimeout(function () {
         //timeout resolve the generator which waits infinitely
         done();
-      }, 2999);
+      }, 2990);
 
       oneTimeCycle.run(function* () {
         var result = yield {
           engine: engine,
           sequence: steps,
-          arguments: initNumber
+          arguments: [initNumber]
         };
 
         yield null;
@@ -134,7 +134,7 @@ describe('Run flow "one-time-cycle"', function () {
           var result = yield {
             engine: engine,
             sequence: steps,
-            arguments: initNumber
+            arguments: [initNumber]
           };
 
           done(new Error('It is expected that an Error be thrown but it was not'));
