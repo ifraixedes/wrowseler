@@ -16,7 +16,7 @@ describe('Run flow "one-time-cycle"', function () {
   });
 
   describe('when generator does not have any yield', function () {
-    it('ends straigtaway', function (done) {
+    it('ends straightaway', function (done) {
       /* jshint noyield: true */
       oneTimeCycle.run(function* () {
         done();
