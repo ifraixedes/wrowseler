@@ -46,7 +46,7 @@ describe('Run flow "allSequences"', function () {
     var initNumber = 10;
     var expectedResult = initNumber;
 
-    it('when task finishes, it returns an object with task\'s id and results', function (done) {
+    it('finishes with the expected result', function (done) {
       allSequences.run(function* () {
         var result = yield {
           engine: engine,
@@ -55,7 +55,9 @@ describe('Run flow "allSequences"', function () {
         };
 
         while (true) {
-          if (result > 500) {
+          if (result > 1500) {
+            //Sending null, allows to allSequence run flow to release the event listener registered
+            //to manage the sequences iteration
             yield null;
             break;
           }
