@@ -78,4 +78,64 @@ describe('Run flow "allSequences"', function () {
     });
   });
 
+  describe('when a step of one of the sequences produce an error', function () {
+    function fakeStep(generator, browser, number) {
+      iterNum++;
+
+      setImmediate(function () {
+        if (maxIter < iterNum) {
+          generator.throw('Max interation reached');
+          return;
+        }
+        generator.next(number * 2);
+      });
+    }
+
+    function generateSequence(numSteps) {
+      var steps = [];
+      for (let si = 0; si < numSteps; si++) {
+        steps.push(fakeStep);
+        expectedResult *= 2;
+      }
+
+      return steps;
+    }
+
+    var numSteps = 3;
+    var initNumber = 10;
+    var expectedResult = initNumber;
+    var maxIter = Math.random() * 10 + numSteps;
+    var iterNum = 0;
+
+    it('generator function get the error', function (done) {
+      allSequences.run(function* () {
+        var result = yield {
+          engine: engine,
+          sequence: generateSequence(numSteps),
+          arguments: [initNumber]
+        };
+
+        try {
+          while (true) {
+            if (iterNum > maxIter) {
+              //Sending null, allows to allSequence run flow to release the event listener registered
+              //to manage the sequences iteration
+              yield null;
+              break;
+            }
+
+            result = yield {
+              sequence: generateSequence(numSteps),
+              arguments: [result]
+            };
+          }
+        } catch (e) {
+          done();
+          return;
+        }
+
+        done(new Error('The error has been throw to the generator function'));
+      });
+    });
+  });
 });
