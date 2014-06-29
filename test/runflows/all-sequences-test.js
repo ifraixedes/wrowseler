@@ -78,6 +78,62 @@ describe('Run flow "allSequences"', function () {
     });
   });
 
+  describe('when a generator yields depending the previous yield\'s result but the first yield does not provided a sequence', function () {
+    function fakeStep(generator, browser, number) {
+      setImmediate(function () {
+        generator.next(number * 2);
+      });
+    }
+
+    function generateSequence(numSteps) {
+      var steps = [];
+      for (let si = 0; si < numSteps; si++) {
+        steps.push(fakeStep);
+        expectedResult *= 2;
+      }
+
+      return steps;
+    }
+
+    var numSteps = 3;
+    var initNumber = 10;
+    var expectedResult = initNumber;
+
+    it('finishes with the expected result', function (done) {
+      allSequences.run(function* () {
+        var result = yield {
+          engine: engine,
+          arguments: [initNumber]
+        };
+
+        while (true) {
+          if (result === null) {
+            result = initNumber;
+          }
+
+          result = yield {
+            sequence: generateSequence(numSteps),
+            arguments: [result]
+          };
+
+          if (result > 1500) {
+            //Sending null, allows to allSequence run flow to release the event listener registered
+            //to manage the sequences iteration
+            yield null;
+            break;
+          }
+        }
+
+        try {
+          expect(result).to.equal(expectedResult);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+  });
+
   describe('when a step of one of the sequences produce an error', function () {
     function fakeStep(generator, browser, number) {
       iterNum++;
