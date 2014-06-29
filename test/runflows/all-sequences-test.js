@@ -25,6 +25,46 @@ describe('Run flow "allSequences"', function () {
     });
   });
 
+  describe('when a generator use sequences with no arguments', function () {
+    function fakeStep(generator, browser) {
+      setImmediate(function () {
+        generator.next(2);
+      });
+    }
+
+    function generateSequence() {
+      var steps = [];
+      for (let si = 0; si < numSteps; si++) {
+        steps.push(fakeStep);
+      }
+
+      return steps;
+    }
+
+    var numSteps = 3;
+    var initNumber = 10;
+
+    it('finishes with the expected result', function (done) {
+      allSequences.run(function* () {
+        var result = yield {
+          engine: engine,
+          sequence: generateSequence(numSteps)
+        };
+
+        result = yield {
+          sequence: generateSequence(numSteps)
+        };
+
+        try {
+          expect(result).to.equal(2);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+  });
+
   describe('when a generator yields depending the previous yield\'s result', function () {
     function fakeStep(generator, browser, number) {
       setImmediate(function () {
