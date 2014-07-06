@@ -1,7 +1,7 @@
 'use strict';
 
-var Engine = require('../../lib/engine');
-var allSequences= require('../../lib/runflows').allSequences;
+var Engine = require('../../engine');
+var allSequences= require('../../runflows/all-sequences');
 var chai = require('chai');
 
 describe('Run flow "allSequences"', function () {

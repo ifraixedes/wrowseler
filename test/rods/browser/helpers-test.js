@@ -2,7 +2,7 @@
 
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
-var rodsHelpers = require('../../../lib/rods/browser/helpers');
+var rodsHelpers = require('../../../rods/browser/helpers');
 
 describe('Browser rods\' helpers', function () {
   var expect = chai.expect;

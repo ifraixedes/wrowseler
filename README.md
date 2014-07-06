@@ -1,11 +1,19 @@
-Keynote
+Wrowseler
 ==============
 
 Wrowseler should be a a kind of a crawler framework which execute javascript, therefore it behaves as a real browser to be able to deal with web sites/pages are not friends of traditional crawlers.
 
 However, it may be useful to test or look for security flaws, between others, in web sites/pages, although there are other frameworks to do these tasks in better way.
 
-NOTE: This project is totally Work In Progress.
+__NOTE__: This project is totally Work In Progress, unfourtunately there is no date when it may be in beta release, you can consider until that an alpha release.
+
+## How to use it
+
+Because it is still Work in  Progress, it has not been published in npm, so to install it you can point it in your `package.json` to this git reposirtory url. 
+
+The Wrowseler package does not export a main module. You must reach the engine directly for `wrowseler/engine` and other stuff under the folders `wrowseler/rods` and `wrowseler/runflows`.
+
+Right now the only chance to see how it works and what it does allow to do is walking through the tests.
 
 ## Technical specifications
 

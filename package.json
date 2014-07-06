@@ -2,7 +2,6 @@
   "name": "wrowseler",
   "version": "0.0.0",
   "description": "A crawler framework which run in a browser using selenim web driver v2",
-  "main": "lib/index.js",
   "directories": {
     "test": "test"
   },

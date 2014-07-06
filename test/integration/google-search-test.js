@@ -2,7 +2,7 @@
 
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
-var Engine = require('../../lib/engine');
+var Engine = require('../../engine');
 var stepsCollectionHelper = require('../helpers/google-steps-collection');
 
 describe('Wroweler browses Google', function () {

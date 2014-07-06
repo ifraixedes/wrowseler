@@ -1,7 +1,7 @@
 'use strict';
 
-var Engine = require('../../lib/engine');
-var oneTimeCycle = require('../../lib/runflows').oneTimeCycle;
+var Engine = require('../../engine');
+var oneTimeCycle = require('../../runflows/one-time-cycle');
 var chai = require('chai');
 
 describe('Run flow "oneTimeCycle"', function () {

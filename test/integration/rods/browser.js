@@ -2,9 +2,9 @@
 
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
-var Engine = require('../../../lib/engine');
-var rodsInjections = require('../../../lib/rods/browser/injections');
-var rodsHelpers = require('../../../lib/rods/browser/helpers');
+var Engine = require('../../../engine');
+var rodsInjections = require('../../../rods/browser/injections');
+var rodsHelpers = require('../../../rods/browser/helpers');
 
 describe('When wrowseler execute a sequence which', function () {
   var engine, wbChrome;

@@ -3,8 +3,8 @@
 var seleniumWb = require('selenium-webdriver');
 var chai = require('chai');
 var sinon = require('sinon');
-var rodsInjections = require('../../../lib/rods/browser/injections');
-var rodsHelpers = require('../../../lib/rods/browser/helpers');
+var rodsInjections = require('../../../rods/browser/injections');
+var rodsHelpers = require('../../../rods/browser/helpers');
 
 describe('Browser rods\' injections', function () {
   var expect = chai.expect;
