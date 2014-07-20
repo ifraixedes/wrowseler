@@ -46,7 +46,9 @@ gear.switchOn = function (engine) {
 };
 
 gear.switchOff = function (engine) {
-  gear._changeEngineStatus(engine, Engine.STATUS_OFF);
+  if (engine.status !== Engine.STATUS_OFF) {
+    gear._changeEngineStatus(engine, Engine.STATUS_OFF);
+  }
 };
 
 /**
